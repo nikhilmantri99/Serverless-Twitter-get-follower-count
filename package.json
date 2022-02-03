@@ -1,0 +1,27 @@
+{
+  "name": "serverless-nodejs-starter",
+  "version": "2.2.0",
+  "description": "A Node.js starter for Serverless Framework with ES6 and TypeScript support",
+  "main": "handler.js",
+  "scripts": {
+    "test": "serverless-bundle test"
+  },
+  "type": "commonjs",
+  "author": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnomalyInnovations/serverless-nodejs-starter.git"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.1067.0",
+    "serverless-bundle": "4.3.1",
+    "serverless-dotenv-plugin": "^2.1.1",
+    "serverless-offline": "^5.3.3"
+  },
+  "dependencies": {
+    "got": "^12.0.1",
+    "needle": "^3.0.0",
+    "oauth-1.0a": "^2.2.6"
+  }
+}
