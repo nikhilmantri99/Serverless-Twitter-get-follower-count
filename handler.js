@@ -44,6 +44,7 @@ async function getRequest(username_) {
             username: res.body.data[0].username, // The id of the author
         },
     };
+
     const oldresult = await dynamoDb.get(get_back).promise();
     var ls=[];
     if(oldresult!=null && oldresult.Item!=null){
@@ -57,6 +58,29 @@ async function getRequest(username_) {
         }
     }
     else{
+        //put this new primary key in a variable inside the same table
+        const primary_key_list={
+            TableName: get_back.TableName,
+            Key: {
+                username: "allPrimaryKeys",
+            },
+        };
+        const allold_Pkeys = await dynamoDb.get(primary_key_list).promise();
+        var corr_ls=[];
+        if(allold_Pkeys!=null && allold_Pkeys.Item!=null){
+            corr_ls=allold_Pkeys.Item.info;
+        }
+        console.log(get_back.Key.username);
+        corr_ls.push(get_back.Key.username);
+        const params_={
+            TableName: get_back.TableName,
+            Item:{
+                username: primary_key_list.Key.username,
+                info: corr_ls,
+            }
+        }
+        await dynamoDb.put(params_).promise();
+        //update the empty list with a val for the new username
         ls.push(new_val);
     }
     const paramsnew={
@@ -87,4 +111,27 @@ export const hello = async (event, context) => {
     statusCode: 200,
     body: JSON.stringify(ans,null,2),
   };
+};
+
+export const updateTable = async (event, context) => {
+    var ans= "Now updating the table's usernames with the latest values";
+    const primary_key_list={
+        TableName: "store-twitter-follower-info",
+        Key: {
+            username: "allPrimaryKeys",
+        },
+    };
+    const dynamoDb_helper = new AWS.DynamoDB.DocumentClient();
+    const all_Pkeys = await dynamoDb_helper.get(primary_key_list).promise();
+    if(all_Pkeys!=null && all_Pkeys.Item!=null){
+        var ls=[];
+        ls=all_Pkeys.Item.info;
+        for(var i=0;i<ls.length;i++){
+            await getRequest(ls[i]);
+        }
+    }
+    return {
+        statusCode: 200,
+        body: "Table updated !",
+    };
 };

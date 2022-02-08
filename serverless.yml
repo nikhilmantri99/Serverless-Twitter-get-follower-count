@@ -46,6 +46,12 @@ functions:
                 Required: true
                 Caching: false
     timeout: 30
+  updateTable:
+    handler: handler.updateTable
+    events:
+      - schedule:
+          rate: rate(24 hours)
+          enabled: true
 
 custom:
   bundle:
